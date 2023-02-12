@@ -1,6 +1,5 @@
 proxy_ip = 'localhost'
 piaproxy_port = '50101'
-port = '40001'
 piaproxy_country = 'de'
 
 RECAPTCHA_API_KEY = 'c26f6101a871f916f86e755a66b0157c'
