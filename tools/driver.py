@@ -1,12 +1,10 @@
 import random
-from typing import Dict
 
-import undetected_chromedriver.v2 as uc
+import undetected_chromedriver as uc
 from random_user_agent.params import OperatingSystem, SoftwareName
 from random_user_agent.user_agent import UserAgent
 
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium import webdriver
 
 SOCKS = False
 HEADLESS = False
@@ -51,30 +49,30 @@ ANDROID_USER_AGENTS = [
 
 def get_browser_fingerprint(profile_dir: str, proxy=None):
     options = uc.ChromeOptions()
-    options.add_argument("--disable-extensions")
-    options.add_argument("--disable-plugins")
-    options.add_argument("--disable-popup-blocking")
-    options.add_argument("--disable-translate")
-    options.add_argument("--disable-notifications")
-    options.add_argument("--disable-infobars")
-    options.add_argument("--disable-auto-login")
-    options.add_argument("--disable-save-password-bubble")
-    options.add_argument("--disable-background-networking")
-    options.add_argument("--disable-sync")
-    options.add_argument("--disable-web-security")
-    options.add_argument("--disable-xss-auditor")
-    options.add_argument("--ignore-certificate-errors")
-    if HEADLESS:
-        options.headless = True
-        options.add_argument("--headless")
-        options.add_argument("--disable-gpu")
-    options.add_argument("--window-size=1920,1200")
-    options.add_argument("--remote-debugging-port=9222")
-    options.add_argument("--remote-debugging-address=0.0.0.0")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-setuid-sandbox")
-    options.add_argument(f"--proxy-server={get_proxy(proxy)}")
+    # options.add_argument("--disable-extensions")
+    # options.add_argument("--disable-plugins")
+    # options.add_argument("--disable-popup-blocking")
+    # options.add_argument("--disable-translate")
+    # options.add_argument("--disable-notifications")
+    # options.add_argument("--disable-infobars")
+    # options.add_argument("--disable-auto-login")
+    # options.add_argument("--disable-save-password-bubble")
+    # options.add_argument("--disable-background-networking")
+    # options.add_argument("--disable-sync")
+    # options.add_argument("--disable-web-security")
+    # options.add_argument("--disable-xss-auditor")
+    # options.add_argument("--ignore-certificate-errors")
+    # if HEADLESS:
+    #     options.headless = True
+    #     options.add_argument("--headless")
+    #     options.add_argument("--disable-gpu")
+    # options.add_argument("--window-size=1920,1200")
+    # options.add_argument("--remote-debugging-port=9222")
+    # options.add_argument("--remote-debugging-address=0.0.0.0")
+    # options.add_argument("--disable-dev-shm-usage")
+    # options.add_argument("--no-sandbox")
+    # options.add_argument("--disable-setuid-sandbox")
+    # options.add_argument(f"--proxy-server={get_proxy(proxy)}")
     options.add_argument(f"--user-agent={get_random_user_agent()}")
     
     options.add_argument("--lang=de")
@@ -94,7 +92,7 @@ def get_browser_fingerprint(profile_dir: str, proxy=None):
         options.add_experimental_option(
             "mobileEmulation", mobile_emulation)
     
-    browser = uc.Chrome(ChromeDriverManager().install(), options=options)
+    browser = uc.Chrome(options=options, driver_executable_path=ChromeDriverManager().install())
     browser.execute_script("Date.prototype.toLocaleString = function() { return new Date(this + 3600000*(new Date().getTimezoneOffset()/60 + 1)).toLocaleString(); }")
     return browser
 
@@ -120,7 +118,7 @@ def get_random_user_agent():
         return user_agent_rotator.get_random_user_agent()
 
 
-def get_proxy(proxy=None):
+def get_proxy(proxy):
     if SOCKS:
         return f'socks5://{proxy}'
     return f'http://{proxy}'

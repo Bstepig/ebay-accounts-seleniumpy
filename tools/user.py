@@ -2,7 +2,7 @@ import random
 from datetime import date
 
 import names
-from utils import generate_password, random_letter_sub, random_date
+from tools.utils import generate_password, random_letter_sub, random_date
 
 OLDEST = date(1960, 1, 1)
 YOUNGEST = date(2004, 12, 31)

@@ -22,7 +22,7 @@ def register_account(port):
 
     driver = get_browser_fingerprint(profile_dir, proxy_res['proxy'])
 
-    gmx_last_url = register_gmx(driver)
+    gmx_last_url = register_gmx(driver, profile)
     register_ebay(driver, profile)
     gmx_ebay_verification(driver, profile, gmx_last_url)
     ebay_phone_verification(driver)

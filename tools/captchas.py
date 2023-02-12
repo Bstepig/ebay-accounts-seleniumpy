@@ -1,6 +1,6 @@
 import requests
 import time
-from keys import CAPTCHA_API_KEY, RECAPTCHA_API_KEY
+from tools.keys import CAPTCHA_API_KEY, RECAPTCHA_API_KEY
 
 
 def solve_captcha(body: str):

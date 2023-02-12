@@ -1,6 +1,5 @@
-from tools.keys import COUNTRY_NUMBER_CODE
-from tools.phone_verification import (EBAY_COUNTRY_CODE, get_activation,
-                                      get_number)
+from tools.keys import COUNTRY_NUMBER_CODE, EBAY_COUNTRY_CODE
+from tools.phone_verification import get_activation, get_number
 from tools.shortcuts import click_element, fill_input
 
 from selenium.webdriver.chrome.webdriver import WebDriver
