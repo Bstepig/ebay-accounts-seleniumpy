@@ -1,7 +1,7 @@
 import pathlib
 from threading import Thread
 
-from actions.email_phone import ebay_phone_verification
+from actions.ebay_phone import ebay_phone_verification
 from actions.gmx_ebay_verification import gmx_ebay_verification
 from actions.register_ebay import register_ebay
 from actions.register_gmx import register_gmx
