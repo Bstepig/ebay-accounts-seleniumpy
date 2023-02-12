@@ -6,20 +6,34 @@ from random_user_agent.user_agent import UserAgent
 
 from webdriver_manager.chrome import ChromeDriverManager
 
-SOCKS = False
+SOCKS = True
 HEADLESS = False
+POOR_BROWSER = True
+REMOTE = True
+WINDOW_SIZE = (1920, 1080)
+USER_AGENT = True
 
-RANDOM_USER_SYSTEM = 'LINUX'
+RANDOM_USER_SYSTEM = 'Linux Chrome'
 
-LINUX_USER_AGENTS = [
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+LINUX_CHROME_USER_AGENTS = [
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36",
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36",
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36",
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
+
 ]
 
 LINUX_FIREFOX_USER_AGENTS = [
@@ -49,31 +63,35 @@ ANDROID_USER_AGENTS = [
 
 def get_browser_fingerprint(profile_dir: str, proxy=None):
     options = uc.ChromeOptions()
-    # options.add_argument("--disable-extensions")
-    # options.add_argument("--disable-plugins")
-    # options.add_argument("--disable-popup-blocking")
-    # options.add_argument("--disable-translate")
-    # options.add_argument("--disable-notifications")
-    # options.add_argument("--disable-infobars")
-    # options.add_argument("--disable-auto-login")
-    # options.add_argument("--disable-save-password-bubble")
-    # options.add_argument("--disable-background-networking")
-    # options.add_argument("--disable-sync")
-    # options.add_argument("--disable-web-security")
-    # options.add_argument("--disable-xss-auditor")
-    # options.add_argument("--ignore-certificate-errors")
-    # if HEADLESS:
-    #     options.headless = True
-    #     options.add_argument("--headless")
-    #     options.add_argument("--disable-gpu")
-    # options.add_argument("--window-size=1920,1200")
-    # options.add_argument("--remote-debugging-port=9222")
-    # options.add_argument("--remote-debugging-address=0.0.0.0")
-    # options.add_argument("--disable-dev-shm-usage")
-    # options.add_argument("--no-sandbox")
-    # options.add_argument("--disable-setuid-sandbox")
-    # options.add_argument(f"--proxy-server={get_proxy(proxy)}")
-    options.add_argument(f"--user-agent={get_random_user_agent()}")
+    if POOR_BROWSER:
+        options.add_argument("--disable-extensions")
+        options.add_argument("--disable-plugins")
+        options.add_argument("--disable-popup-blocking")
+        options.add_argument("--disable-translate")
+        options.add_argument("--disable-notifications")
+        options.add_argument("--disable-infobars")
+        options.add_argument("--disable-auto-login")
+        options.add_argument("--disable-save-password-bubble")
+        options.add_argument("--disable-background-networking")
+        options.add_argument("--disable-sync")
+        options.add_argument("--disable-web-security")
+        options.add_argument("--disable-xss-auditor")
+        options.add_argument("--ignore-certificate-errors")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-setuid-sandbox")
+    if HEADLESS:
+        options.headless = True
+        options.add_argument("--headless")
+        options.add_argument("--disable-gpu")
+    if REMOTE:
+        options.add_argument("--remote-debugging-port=9222")
+        options.add_argument("--remote-debugging-address=0.0.0.0")
+    if WINDOW_SIZE:
+        options.add_argument(f"--window-size={WINDOW_SIZE[0]},{WINDOW_SIZE[1]}")
+        options.add_argument(f"--proxy-server={get_proxy(proxy)}")
+    if USER_AGENT:
+        options.add_argument(f"--user-agent={get_random_user_agent()}")
     
     options.add_argument("--lang=de")
 
@@ -97,8 +115,8 @@ def get_browser_fingerprint(profile_dir: str, proxy=None):
     return browser
 
 def get_random_user_agent():
-    if RANDOM_USER_SYSTEM == 'Linux':
-        user_agents = LINUX_USER_AGENTS
+    if RANDOM_USER_SYSTEM == 'Linux Chrome':
+        user_agents = LINUX_CHROME_USER_AGENTS
         return random.choice(user_agents)
     
     if RANDOM_USER_SYSTEM == 'Linux Firefox':
