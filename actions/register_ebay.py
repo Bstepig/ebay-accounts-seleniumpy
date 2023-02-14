@@ -2,7 +2,7 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from tools.captchas import get_captcha_solve, solve_recaptcha
+from tools.captchas import get_recaptcha_solve, solve_recaptcha
 from tools.shortcuts import fill_input, wait
 from tools.user import Profile
 
@@ -28,7 +28,7 @@ def register_ebay(driver: WebDriver, profile: Profile):
     fill_input(driver, profile.ebay_password,
                 By.ID, 'registration-password')
 
-    solve_token = get_captcha_solve(recaptcha_request_id)
+    solve_token = get_recaptcha_solve(recaptcha_request_id)
     driver.execute_script(
         f"document.getElementById('g-recaptcha-response').innerHTML = '{solve_token}'")
 

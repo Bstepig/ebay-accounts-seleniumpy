@@ -1,8 +1,7 @@
-
 import random
 import secrets
 import string
-from datetime import timedelta, date
+from datetime import date, timedelta
 from random import randrange
 
 DIGITS_LEN = random.randint(2, 5)

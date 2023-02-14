@@ -1,8 +1,14 @@
-proxy_ip = 'localhost'
-piaproxy_port = '50101'
-piaproxy_country = 'de'
+START_PORT = 40000
+NUMBER_OF_THREADS = 5
+REPEATS = 2
 
+PIAPROXY_IP = 'localhost'
+PIAPROXY_PORT = '50101'
+PIAPROXY_COUNTRY = 'DE'
+
+RECAPTCHA_PROVIDER = 'http://rucaptcha.com'
 RECAPTCHA_API_KEY = 'c26f6101a871f916f86e755a66b0157c'
+CAPTCHA_PROVIDER = 'http://rucaptcha.com'
 CAPTCHA_API_KEY = 'c26f6101a871f916f86e755a66b0157c'
 
 PHONE_VERIFICATION_PROVIDER = 'sms-activate.org'

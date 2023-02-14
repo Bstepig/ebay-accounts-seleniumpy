@@ -1,17 +1,13 @@
 import requests
-
-piaproxy_ip = 'localhost'
-piaproxy_port = '50101'
-piaproxy_country = 'DE'
-
+from tools.config import PIAPROXY_IP, PIAPROXY_PORT, PIAPROXY_COUNTRY
 
 
 def load_pia_proxy(port):
-    url = f'http://{piaproxy_ip}:{piaproxy_port}/api/get_ip_list'
+    url = f'http://{PIAPROXY_IP}:{PIAPROXY_PORT}/api/get_ip_list'
     params = {
         'num': 1,
         't': 2,
-        'country': piaproxy_country,
+        'country': PIAPROXY_COUNTRY,
         'ip_time': 1,
         'port': port,
     }

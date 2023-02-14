@@ -1,10 +1,10 @@
 import requests
-from tools.keys import CAPTCHA_API_KEY, RECAPTCHA_API_KEY
+from tools.config import CAPTCHA_API_KEY, RECAPTCHA_API_KEY, CAPTCHA_PROVIDER, RECAPTCHA_PROVIDER
 from tools.shortcuts import wait
 
 
 def solve_captcha(body: str):
-    url = 'http://rucaptcha.com/in.php'
+    url = f'{CAPTCHA_PROVIDER}/in.php'
     data = {
         "key": CAPTCHA_API_KEY,
         "method": 'base64',
@@ -20,7 +20,7 @@ def solve_captcha(body: str):
 
 
 def solve_recaptcha(sitekey: str, pageurl: str):
-    url = 'http://rucaptcha.com/in.php'
+    url = f'{RECAPTCHA_PROVIDER}/in.php'
     data = {
         "key": RECAPTCHA_API_KEY,
         "method": 'userrecaptcha',
@@ -38,15 +38,32 @@ def solve_recaptcha(sitekey: str, pageurl: str):
 
 def get_captcha_solve(id: str):
     while True:
-        res_url = 'http://rucaptcha.com/res.php'
-        wait(3)
+        url = f'{CAPTCHA_PROVIDER}/out.php'
+        wait(3, 5)
+        data = {
+            "key": CAPTCHA_API_KEY,
+            "action": 'get',
+            "id": id,
+            "json": 1
+        }
+        response = requests.get(url, params=data).json()
+        if response['status'] == 1:
+            return response['request']
+        if response['status'] != 0:
+            raise Exception(response)
+
+
+def get_recaptcha_solve(id: str):
+    while True:
+        url = f'{RECAPTCHA_PROVIDER}/out.php'
+        wait(3, 5)
         data = {
             "key": RECAPTCHA_API_KEY,
             "action": 'get',
             "id": id,
             "json": 1
         }
-        response = requests.get(res_url, params=data).json()
+        response = requests.get(url, params=data).json()
         if response['status'] == 1:
             return response['request']
         if response['status'] != 0:

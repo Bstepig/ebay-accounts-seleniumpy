@@ -2,7 +2,7 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select, WebDriverWait
-from tools.keys import COUNTRY_NUMBER_CODE, EBAY_COUNTRY_CODE
+from tools.config import COUNTRY_NUMBER_CODE, EBAY_COUNTRY_CODE
 from tools.phone_verification import get_activation, get_number
 from tools.shortcuts import click_element, fill_input
 
