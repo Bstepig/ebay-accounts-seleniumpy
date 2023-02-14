@@ -1,6 +1,6 @@
 import requests
-import time
 from tools.keys import CAPTCHA_API_KEY, RECAPTCHA_API_KEY
+from tools.shortcuts import wait
 
 
 def solve_captcha(body: str):
@@ -39,7 +39,7 @@ def solve_recaptcha(sitekey: str, pageurl: str):
 def get_captcha_solve(id: str):
     while True:
         res_url = 'http://rucaptcha.com/res.php'
-        time.sleep(3)
+        wait(3)
         data = {
             "key": RECAPTCHA_API_KEY,
             "action": 'get',

@@ -10,4 +10,3 @@ def store_result(proxy_res, profile_dir, profile):
     file = open(profile_dir + '/result.txt', 'w', encoding='utf8')
     file.write('\n'.join(results))
     file.close()
-    print('\033[92m' + f"Success! {profile.get_email()}" + '\033[0m')

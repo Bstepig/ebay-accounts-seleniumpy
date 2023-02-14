@@ -13,6 +13,15 @@ from tools.user import Profile
 path = pathlib.Path().resolve()
 
 
+def register_account_cycle(port, repeats=20):
+    for i in range(repeats):
+        try:
+            profile = register_account(port)
+            print(f'\033[92m[{port}, {i+1}/{repeats}] Success! {profile.get_email()}\033[0m')
+        except Exception as e:
+            print(f'\033[91m[{port}, {i+1}/{repeats}] {e}\033[0m\n', end='')
+
+
 def register_account(port):
 
     proxy_res = load_pia_proxy(port)
@@ -34,15 +43,18 @@ def register_account(port):
     driver.close()
     driver.quit()
 
+    return profile
+
 
 start_port = 40000
-number_of_threads = 1
+number_of_threads = 5
+repeats = 2
 
 threads = []
 
 for port_tail in range(number_of_threads):
     port = str(start_port + port_tail)
-    t = Thread(target=register_account, args=[port])
+    t = Thread(target=register_account_cycle, args=[port, repeats])
     t.start()
     threads.append(t)
 

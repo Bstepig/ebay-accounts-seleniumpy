@@ -1,32 +1,27 @@
-import time
-
-from tools.captchas import get_captcha_solve, solve_captcha
-
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
+from tools.captchas import get_captcha_solve, solve_captcha
+from tools.shortcuts import click_element, fill_input, switch_to, wait, fill_input_precise
 from tools.user import Profile
-
-import time
-
-from tools.shortcuts import fill_input, switch_to, click_element
 
 
 def inputGmx(driver: WebDriver, inputDataTest: str, value: str):
     fill_input(driver, value, By.XPATH,
                 "//input[@data-test=\"" + inputDataTest + "\"]")
+    wait(1, 4)
 
 def tryToClose(driver: WebDriver):
     try:
-        time.sleep(5)
+        wait(5, 10)
         switch_to(driver, By.NAME, 'landingpage')
 
         driver.switch_to.frame(0)
         click_element(driver, By.ID, 'save-all-pur')
 
-        time.sleep(5)
+        wait(2, 5)
 
     except Exception as e:
         print(e)
@@ -40,16 +35,23 @@ def register_gmx(driver: WebDriver, profile: Profile):
 
     tryToClose(driver)
 
+    wait(1, 3)
+
     click_element(driver, By.XPATH,
                     '//a[@data-importance="ghost"]', timeout=30)
 
     driver.switch_to.default_content()
 
+    wait(1, 3)
+
     click_element(driver, By.XPATH, '//a[@class="key l button"]')
 
+    wait(1, 3)
+
+    inputGmx(driver, "check-email-availability-email-input",
+                profile.get_email_name())
+
     while True:
-        inputGmx(driver, "check-email-availability-email-input",
-                    profile.get_email_name())
         click_element(
             driver, By.XPATH, '//button[@data-test="check-email-availability-check-button"]')
 
@@ -74,13 +76,19 @@ def register_gmx(driver: WebDriver, profile: Profile):
             find_email_checking_result)
 
         if result == 1:
+            wait(4, 8)
             profile.next_email_name()
+            fill_input_precise(driver, profile.get_email_name(), By.XPATH,
+                "//input[@data-test=\"check-email-availability-email-input\"]")
+            wait(1, 4)
 
         if result == 2:
             break
 
+    wait(1, 3)
+
     click_element(driver, By.XPATH,
-                    f'//onereg-radio-wrapper[{str(profile.genderIndex)}]')
+                    f'//onereg-radio-wrapper[{str(profile.genderIndex + 1)}]')
 
     inputGmx(driver, "first-name-input", profile.firstName)
     inputGmx(driver, "last-name-input", profile.lastName)
@@ -142,7 +150,7 @@ def register_gmx(driver: WebDriver, profile: Profile):
         pass
 
     try:
-        time.sleep(5)
+        wait(5, 10)
         driver.switch_to.frame("thirdPartyFrame_layer")
         click_element(driver, By.CLASS_NAME, 'button large secondary')
     except Exception as e:

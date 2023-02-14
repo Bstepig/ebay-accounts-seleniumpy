@@ -1,17 +1,14 @@
-import time
-
-from tools.shortcuts import click_element, fill_input, switch_to
-from tools.user import Profile
-
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
+from tools.shortcuts import click_element, fill_input, switch_to, wait
+from tools.user import Profile
 
 
 def gmx_ebay_verification(driver: WebDriver, profile: Profile, page: str):
     driver.get(page)
 
     try:
-        time.sleep(10)
+        wait(10)
         driver.switch_to.frame("thirdPartyFrame_permission_dialog")
         driver.switch_to.frame("permission-iframe")
         click_element(driver, By.XPATH,
@@ -23,7 +20,7 @@ def gmx_ebay_verification(driver: WebDriver, profile: Profile, page: str):
         driver.switch_to.default_content()
 
     try:
-        time.sleep(10)
+        wait(10)
         driver.switch_to.frame("thirdPartyFrame_permission_dialog")
         driver.switch_to.frame("permission-iframe")
         click_element(driver, By.ID, 'close-layer')
@@ -33,7 +30,7 @@ def gmx_ebay_verification(driver: WebDriver, profile: Profile, page: str):
         driver.switch_to.default_content()
 
     try:
-        time.sleep(3)
+        wait(3)
         driver.switch_to.frame("thirdPartyFrame_permission_dialog")
         driver.switch_to.frame("permission-iframe")
         click_element(driver, By.CLASS_NAME,

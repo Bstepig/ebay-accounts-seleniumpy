@@ -1,13 +1,10 @@
-import time
-
-from tools.captchas import get_captcha_solve, solve_recaptcha
-from tools.shortcuts import fill_input
-from tools.user import Profile
-
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from tools.captchas import get_captcha_solve, solve_recaptcha
+from tools.shortcuts import fill_input, wait
+from tools.user import Profile
 
 
 def register_ebay(driver: WebDriver, profile: Profile):
@@ -17,7 +14,7 @@ def register_ebay(driver: WebDriver, profile: Profile):
     acceptBanner = WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.ID, 'gdpr-banner-accept')))
     acceptBanner.click()
-    time.sleep(3)
+    wait(3)
     startRegistration = WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.CLASS_NAME, 'button-secondary')))
     startRegistration.click()

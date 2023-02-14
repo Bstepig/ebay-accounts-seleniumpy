@@ -23,7 +23,6 @@ def load_pia_proxy(port):
        raise Exception(f'Problem with piaproxy: {body["msg"]}. {status} {body}')
 
     if body['code'] == -1:
-       print(body['msg'])
        raise Exception(f'Problem with piaproxy: {body["msg"]}')
 
     data = body['data'][0]

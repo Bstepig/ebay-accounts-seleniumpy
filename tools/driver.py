@@ -63,6 +63,20 @@ ANDROID_USER_AGENTS = [
 
 def get_browser_fingerprint(profile_dir: str, proxy=None):
     options = uc.ChromeOptions()
+
+    #Removes navigator.webdriver flag
+    # For older ChromeDriver under version 79.0.3945.16
+    # options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    # options.add_experimental_option('useAutomationExtension', False)
+
+    #For ChromeDriver version 79.0.3945.16 or over
+    options.add_argument('--disable-blink-features=AutomationControlled')
+
+    # options.add_argument("start-maximized")
+    # options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    # options.add_experimental_option('useAutomationExtension', False)
+
+
     if POOR_BROWSER:
         options.add_argument("--disable-extensions")
         options.add_argument("--disable-plugins")
@@ -90,8 +104,9 @@ def get_browser_fingerprint(profile_dir: str, proxy=None):
     if WINDOW_SIZE:
         options.add_argument(f"--window-size={WINDOW_SIZE[0]},{WINDOW_SIZE[1]}")
         options.add_argument(f"--proxy-server={get_proxy(proxy)}")
+    user_agent = get_random_user_agent()
     if USER_AGENT:
-        options.add_argument(f"--user-agent={get_random_user_agent()}")
+        options.add_argument(f"--user-agent={user_agent}")
     
     options.add_argument("--lang=de")
 
@@ -112,6 +127,10 @@ def get_browser_fingerprint(profile_dir: str, proxy=None):
     
     browser = uc.Chrome(options=options, driver_executable_path=ChromeDriverManager().install())
     browser.execute_script("Date.prototype.toLocaleString = function() { return new Date(this + 3600000*(new Date().getTimezoneOffset()/60 + 1)).toLocaleString(); }")
+    browser.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+    if USER_AGENT:
+        browser.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": user_agent})
+    print(browser.execute_script("return navigator.userAgent;"))
     return browser
 
 def get_random_user_agent():
