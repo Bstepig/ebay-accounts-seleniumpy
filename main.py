@@ -1,3 +1,4 @@
+from datetime import datetime
 import pathlib
 from threading import Thread
 
@@ -13,31 +14,44 @@ from tools.user import Profile
 
 path = pathlib.Path().resolve()
 
+STOP_ON_ERROR = True
+
 
 def register_account_cycle(port, repeats=20):
     for i in range(repeats):
         try:
-            profile = register_account(port)
+            profile = register_account(port, i, repeats)
             print(f'\033[92m[{port}, {i+1}/{repeats}] Success! {profile.get_email()}\033[0m')
         except Exception as e:
+            if STOP_ON_ERROR:
+                raise e
             print(f'\033[91m[{port}, {i+1}/{repeats}] {e}\033[0m\n', end='')
+    print(f'\033[94m[{port}] Completed. \033[0m\n', end='')
 
 
-def register_account(port):
+def register_account(port, attempt, repeats):
 
     proxy_res = load_pia_proxy(port)
 
     profile = Profile(proxy_res)
     profile_dir = f'{path}/profiles/{profile.get_email()}'
 
-    driver = get_browser_fingerprint(profile_dir, proxy_res['proxy'])
+    driver = get_browser_fingerprint(profile_dir, port, proxy_res['proxy'])
 
-    gmx_last_url = register_gmx(driver, profile)
-    register_ebay(driver, profile)
-    gmx_ebay_verification(driver, profile, gmx_last_url)
-    ebay_phone_verification(driver)
-    store_result(proxy_res, profile_dir, profile)
-
+    try:
+        print(f'\033[90m[{port}, {attempt+1}/{repeats}] Process GMX registration...\033[0m')
+        gmx_last_url = register_gmx(driver, profile)
+        print(f'\033[90m[{port}, {attempt+1}/{repeats}] Process eBay registration...\033[0m')
+        register_ebay(driver, profile)
+        print(f'\033[90m[{port}, {attempt+1}/{repeats}] Process email verification...\033[0m')
+        gmx_ebay_verification(driver, profile, gmx_last_url)
+        print(f'\033[90m[{port}, {attempt+1}/{repeats}] Process phone verification...\033[0m')
+        ebay_phone_verification(driver)
+        store_result(proxy_res, profile_dir, profile)
+    except Exception as e:
+        fine = driver.save_screenshot(f'{path}/screenshots/[{port}, {attempt+1}/{repeats}] {profile.get_email()}.png')
+        input(fine)
+        raise e
     # driver.get('https://bot.sannysoft.com')
     # driver.get("https://nowsecure.nl")
 

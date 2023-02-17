@@ -1,19 +1,32 @@
 import random
 
 import undetected_chromedriver as uc
+from selenium import webdriver
 from random_user_agent.params import OperatingSystem, SoftwareName
 from random_user_agent.user_agent import UserAgent
 
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service as ChromeService
+import threading
+
+file_lock = threading.Lock()
+
+SCREEN_RESOLUTIONS = [
+    (1920, 1080),
+    (1920, 1080),
+    (1920, 1080),
+    (1366, 768),
+    (1366, 768),
+    (1536, 864),
+]
 
 SOCKS = True
 HEADLESS = False
 POOR_BROWSER = True
 REMOTE = True
-WINDOW_SIZE = (1920, 1080)
 USER_AGENT = True
 
-RANDOM_USER_SYSTEM = 'Linux Chrome'
+RANDOM_USER_SYSTEM = 'Windows Chrome'
 
 LINUX_CHROME_USER_AGENTS = [
     # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
@@ -24,15 +37,15 @@ LINUX_CHROME_USER_AGENTS = [
     # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
     # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36",
     # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
+    # "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
 
 ]
 
@@ -61,7 +74,8 @@ ANDROID_USER_AGENTS = [
     "Mozilla/5.0 (Linux; Android 8.0.0; SM-G935U Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Mobile Safari/537.36",
 ]
 
-def get_browser_fingerprint(profile_dir: str, proxy=None):
+def get_browser_fingerprint(profile_dir: str, port, proxy=None):
+    WINDOW_SIZE = random.choice(SCREEN_RESOLUTIONS)
     options = uc.ChromeOptions()
 
     #Removes navigator.webdriver flag
@@ -71,6 +85,7 @@ def get_browser_fingerprint(profile_dir: str, proxy=None):
 
     #For ChromeDriver version 79.0.3945.16 or over
     options.add_argument('--disable-blink-features=AutomationControlled')
+    options.add_argument('--browser-version=110')
 
     # options.add_argument("start-maximized")
     # options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -96,7 +111,7 @@ def get_browser_fingerprint(profile_dir: str, proxy=None):
         options.add_argument("--disable-setuid-sandbox")
     if HEADLESS:
         options.headless = True
-        options.add_argument("--headless")
+        # options.add_argument("--headless")
         options.add_argument("--disable-gpu")
     if REMOTE:
         options.add_argument("--remote-debugging-port=9222")
@@ -124,10 +139,14 @@ def get_browser_fingerprint(profile_dir: str, proxy=None):
 
         options.add_experimental_option(
             "mobileEmulation", mobile_emulation)
-    
-    browser = uc.Chrome(options=options, driver_executable_path=ChromeDriverManager().install())
+
+    executable_path=f'{ChromeDriverManager().install()}'
+    driver_executable_path=f'drivers/chromedriver{port}'
+    service = ChromeService(executable_path=executable_path)
+    with file_lock:
+        browser = uc.Chrome(options=options, service=service)
     browser.execute_script("Date.prototype.toLocaleString = function() { return new Date(this + 3600000*(new Date().getTimezoneOffset()/60 + 1)).toLocaleString(); }")
-    browser.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+    # browser.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
     if USER_AGENT:
         browser.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": user_agent})
     print(browser.execute_script("return navigator.userAgent;"))
@@ -145,6 +164,14 @@ def get_random_user_agent():
     if RANDOM_USER_SYSTEM == 'Android':
         user_agents = ANDROID_USER_AGENTS
         return random.choice(user_agents)
+    
+    if RANDOM_USER_SYSTEM == 'Windows Chrome':
+        software_names = [SoftwareName.CHROME.value]
+        operating_systems = [OperatingSystem.WINDOWS.value]
+
+        user_agent_rotator = UserAgent(
+            software_names=software_names, operating_systems=operating_systems, limit=1)
+        return user_agent_rotator.get_random_user_agent()
     
     if RANDOM_USER_SYSTEM == 'Any' or True:
         software_names = [SoftwareName.CHROME.value]
